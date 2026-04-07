@@ -191,12 +191,12 @@ test.describe('Articles', () => {
     await page.waitForSelector('.article-preview', { timeout: 10000 });
 
     // Wait for our specific article to appear
-    await page.waitForSelector(`h1:has-text("${article.title}")`, { timeout: 10000 });
+    await page.locator('h1', { hasText: article.title }).first().waitFor({ timeout: 10000 });
 
     // Click on the article link in the feed (h1 is inside a link)
     await Promise.all([
       page.waitForURL(/\/article\/.+/),
-      page.locator(`h1:has-text("${article.title}")`).first().click(),
+      page.locator('h1', { hasText: article.title }).first().click(),
     ]);
 
     // Should be on article page
