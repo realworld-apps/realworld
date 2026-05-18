@@ -11,9 +11,11 @@ if [ ${#FOLDERS[@]} -eq 0 ]; then
   for entry in "$DIR"/bruno/*/; do
     name="$(basename "$entry")"
     [ "$name" = "environments" ] && continue
-    FOLDERS+=("$entry")
+    FOLDERS+=("$name")
   done
 fi
+
+cd "$DIR/bruno"
 
 for folder in "${FOLDERS[@]}"; do
   echo ""
