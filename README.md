@@ -55,3 +55,4 @@ See [LICENSES_LOGOS.md](docs/non-included/LICENSES_LOGOS.md) for framework logo 
 
 - **[c4ffein](https://github.com/c4ffein) - Maintainer** - maintains the spec, the test suites and the [demo website](https://demo.realworld.show)
 - **[Manuel Vila](https://github.com/mvila) - Maintainer** - creator of the [Layr framework](https://layrjs.com) and the [CodebaseShow website](https://codebase.show/)
+REST APIs
