@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { register, generateUniqueUser, login } from './helpers/auth';
 import { registerUserViaAPI, createManyArticles as createManyArticlesViaAPI } from './helpers/api';
 import { createUserInIsolation, createManyArticles } from './helpers/setup';
-import { API_MODE } from './helpers/config';
+import { EXTERNAL_API } from './helpers/config';
 
 test.describe('URL-based Navigation (Realworld Issue #691)', () => {
   test.afterEach(async ({ context }) => {
@@ -112,7 +112,7 @@ test.describe('Pagination', () => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, testUser);
       await createManyArticlesViaAPI(request, token, 15, uniqueTag);
       await login(page, testUser.email, testUser.password);
@@ -125,20 +125,20 @@ test.describe('Pagination', () => {
     await page.goto(`/tag/${uniqueTag}`);
     await page.waitForSelector('.article-preview', { timeout: 2000 });
     // Should have pagination (15 articles = 2 pages with limit 10)
-    await expect(page.locator('.pagination button:has-text("2")')).toBeVisible({ timeout: 2000 });
+    await expect(page.locator('.pagination .page-link:has-text("2")')).toBeVisible({ timeout: 2000 });
     // Click page 2
-    await page.click('.pagination button:has-text("2")');
+    await page.click('.pagination .page-link:has-text("2")');
     // URL should have ?page=2
     await expect(page).toHaveURL(new RegExp(`/tag/${uniqueTag}\\?page=2`));
     // Page 2 should be active
-    await expect(page.locator('.pagination .page-item:has(button:has-text("2"))')).toHaveClass(/active/);
+    await expect(page.locator('.pagination .page-item:has(.page-link:has-text("2"))')).toHaveClass(/active/);
   });
 
   test('should load correct page when navigating directly to ?page=N', async ({ page, request, browser }) => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, testUser);
       await createManyArticlesViaAPI(request, token, 15, uniqueTag);
       await login(page, testUser.email, testUser.password);
@@ -151,7 +151,7 @@ test.describe('Pagination', () => {
     await page.goto(`/tag/${uniqueTag}?page=2`);
     await page.waitForSelector('.article-preview', { timeout: 2000 });
     // Page 2 should be active
-    await expect(page.locator('.pagination .page-item:has(button:has-text("2"))')).toHaveClass(/active/);
+    await expect(page.locator('.pagination .page-item:has(.page-link:has-text("2"))')).toHaveClass(/active/);
     // URL should have page=2
     const url = new URL(page.url());
     expect(url.searchParams.get('page')).toBe('2');
@@ -166,11 +166,11 @@ test.describe('Pagination', () => {
     // Wait for the page to load (might be empty or have articles)
     await page.waitForSelector('.article-preview, .empty-feed-message', { timeout: 2000 });
     // Check if pagination exists (depends on followed users having 11+ articles)
-    const page2Button = page.locator('.pagination button:has-text("2")');
+    const page2Button = page.locator('.pagination .page-link:has-text("2")');
     const hasPage2 = await page2Button.isVisible().catch(() => false);
     if (hasPage2) {
       // Click page 2
-      await page.click('.pagination button:has-text("2")');
+      await page.click('.pagination .page-link:has-text("2")');
       // URL should preserve feed param and add page
       await expect(page).toHaveURL('/?feed=following&page=2');
     } else {
@@ -183,7 +183,7 @@ test.describe('Pagination', () => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, testUser);
       await createManyArticlesViaAPI(request, token, 15, uniqueTag);
       await login(page, testUser.email, testUser.password);
@@ -196,9 +196,9 @@ test.describe('Pagination', () => {
     await page.goto(`/tag/${uniqueTag}`);
     await page.waitForSelector('.article-preview', { timeout: 2000 });
     // Should have pagination
-    await expect(page.locator('.pagination button:has-text("2")')).toBeVisible({ timeout: 2000 });
+    await expect(page.locator('.pagination .page-link:has-text("2")')).toBeVisible({ timeout: 2000 });
     // Click page 2
-    await page.click('.pagination button:has-text("2")');
+    await page.click('.pagination .page-link:has-text("2")');
     // Wait for URL to update after page navigation
     await expect(page).toHaveURL(`/tag/${uniqueTag}?page=2`);
   });
@@ -207,7 +207,7 @@ test.describe('Pagination', () => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, testUser);
       await createManyArticlesViaAPI(request, token, 15, uniqueTag);
       await login(page, testUser.email, testUser.password);
@@ -220,9 +220,9 @@ test.describe('Pagination', () => {
     await page.goto(`/tag/${uniqueTag}`);
     await page.waitForSelector('.article-preview', { timeout: 2000 });
     // Should have pagination
-    await expect(page.locator('.pagination button:has-text("2")')).toBeVisible({ timeout: 2000 });
+    await expect(page.locator('.pagination .page-link:has-text("2")')).toBeVisible({ timeout: 2000 });
     // Go to page 2
-    await page.click('.pagination button:has-text("2")');
+    await page.click('.pagination .page-link:has-text("2")');
     await expect(page).toHaveURL(new RegExp(`/tag/${uniqueTag}\\?page=2`));
     // Click Global Feed and wait for URL to change to root path
     await page.click('.nav-link:has-text("Global Feed")');
@@ -235,7 +235,7 @@ test.describe('Pagination', () => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, testUser);
       await createManyArticlesViaAPI(request, token, 15, uniqueTag);
       await login(page, testUser.email, testUser.password);
@@ -248,14 +248,14 @@ test.describe('Pagination', () => {
     await page.goto(`/tag/${uniqueTag}`);
     await page.waitForSelector('.article-preview', { timeout: 2000 });
     // Should have pagination (15 articles = 2 pages)
-    await expect(page.locator('.pagination button:has-text("2")')).toBeVisible({ timeout: 2000 });
+    await expect(page.locator('.pagination .page-link:has-text("2")')).toBeVisible({ timeout: 2000 });
     // First page should show 10 articles
     const articlesOnPage1 = await page.locator('.article-preview').count();
     expect(articlesOnPage1).toBe(10);
     // Click page 2
-    await page.click('.pagination button:has-text("2")');
+    await page.click('.pagination .page-link:has-text("2")');
     // Wait for page 2 to be active (Angular routing/rendering delay)
-    await expect(page.locator('.pagination .page-item:has(button:has-text("2"))')).toHaveClass(/active/, {
+    await expect(page.locator('.pagination .page-item:has(.page-link:has-text("2"))')).toHaveClass(/active/, {
       timeout: 2000,
     });
     await page.waitForSelector('.article-preview', { timeout: 2000 });

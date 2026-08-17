@@ -4,25 +4,26 @@ title: Templates
 
 ## Head
 
-The `<head>` element includes all the metadata for a page, including the title, description, and links to stylesheets and scripts.
+The `<head>` element includes the page metadata (title, description) and loads the stylesheet.
+
+Load the shared [Conduit theme](https://github.com/realworld-apps/realworld/blob/main/assets/theme/styles.css) plus the fonts and icons it relies on. `styles.css` does **not** bundle fonts or icons, so the head below loads all three; see the [Styles](/specifications/frontend/styles/) page for details.
 
 ```html
 <head>
   <meta charset="utf-8" />
   <title>Conduit</title>
-  <!-- Import Ionicon icons & Google Fonts our Bootstrap theme relies on -->
+  <!-- Icons: the ion-* classes used in the templates below (legacy Ionicons v2) -->
   <link
-    href="//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"
     rel="stylesheet"
-    type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"
   />
+  <!-- Fonts the theme uses -->
   <link
-    href="//fonts.googleapis.com/css?family=Titillium+Web:700|Source+Serif+Pro:400,700|Merriweather+Sans:400,700|Source+Sans+Pro:400,300,600,700,300italic,400italic,600italic,700italic"
     rel="stylesheet"
-    type="text/css"
+    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Lora:400,700"
   />
-  <!-- Import the custom Bootstrap 4 theme from our hosted CDN -->
-  <link rel="stylesheet" href="//demo.productionready.io/main.css" />
+  <!-- The shared Conduit theme (serve styles.css from your own app) -->
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 ```
 

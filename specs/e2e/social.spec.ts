@@ -4,7 +4,7 @@ import { createArticle, generateUniqueArticle } from './helpers/articles';
 import { followUser, unfollowUser } from './helpers/profile';
 import { registerUserViaAPI, createArticleViaAPI } from './helpers/api';
 import { createUserInIsolation } from './helpers/setup';
-import { API_MODE } from './helpers/config';
+import { EXTERNAL_API } from './helpers/config';
 
 test.describe('Social Features', () => {
   test.afterEach(async ({ context }) => {
@@ -24,10 +24,10 @@ test.describe('Social Features', () => {
     const user = generateUniqueUser();
     await register(page, user.username, user.email, user.password);
 
-    // API mode: use johndoe (demo backend, user isolation prevents creating visible users)
+    // External API: use johndoe (demo backend, user isolation prevents creating visible users)
     // Fullstack mode: create a second user via UI in an isolated browser context
     let targetUsername: string;
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       targetUsername = 'johndoe';
     } else {
       const otherUser = generateUniqueUser();
@@ -64,10 +64,10 @@ test.describe('Social Features', () => {
     const user = generateUniqueUser();
     await register(page, user.username, user.email, user.password);
 
-    // API mode: johndoe exists with articles on the demo backend
+    // External API: johndoe exists with articles on the demo backend
     // Fullstack mode: create a second user with an article via UI
     let targetUsername: string;
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       targetUsername = 'johndoe';
     } else {
       const otherUser = generateUniqueUser();
@@ -155,10 +155,10 @@ test.describe('Social Features', () => {
     const user = generateUniqueUser();
     await register(page, user.username, user.email, user.password);
 
-    // API mode: johndoe exists with articles on the demo backend
+    // External API: johndoe exists with articles on the demo backend
     // Fullstack mode: create a second user with an article via UI
     let targetUsername: string;
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       targetUsername = 'johndoe';
     } else {
       const otherUser = generateUniqueUser();
@@ -190,7 +190,7 @@ test.describe('Social Features', () => {
     await register(page, user.username, user.email, user.password);
 
     let targetUsername: string;
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       targetUsername = 'johndoe';
     } else {
       const otherUser = generateUniqueUser();

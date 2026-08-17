@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 import { register, login, logout, generateUniqueUser } from './helpers/auth';
 import { getToken, getAuthState } from './helpers/debug';
-import { API_MODE } from './helpers/config';
+import { BROWSER_API } from './helpers/config';
 
 /** Demo API isolation does not keep users after logout; fullstack enforces uniqueness. */
 async function mockRegisterConflict(page: Page, field: 'email' | 'username') {
@@ -100,7 +100,7 @@ test.describe('Authentication', () => {
   });
 
   test('should handle invalid token on page reload gracefully', async ({ page }) => {
-    test.skip(!API_MODE, 'API-only: tests localStorage token handling');
+    test.skip(!BROWSER_API, 'SPA-only: tests localStorage token handling');
     // Set an invalid token in localStorage before navigating
     await page.goto('/');
     await page.evaluate(() => {
@@ -147,7 +147,7 @@ test.describe('Authentication', () => {
     const duplicate = generateUniqueUser();
     await page.goto('/register');
     await expect(page).toHaveURL(/\/register/);
-    if (API_MODE) {
+    if (BROWSER_API) {
       await mockRegisterConflict(page, 'email');
     }
     await page.fill('input[name="username"]', duplicate.username);
@@ -168,7 +168,7 @@ test.describe('Authentication', () => {
     const duplicate = generateUniqueUser();
     await page.goto('/register');
     await expect(page).toHaveURL(/\/register/);
-    if (API_MODE) {
+    if (BROWSER_API) {
       await mockRegisterConflict(page, 'username');
     }
     await page.fill('input[name="username"]', user.username);

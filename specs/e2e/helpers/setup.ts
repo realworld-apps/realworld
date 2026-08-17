@@ -1,7 +1,7 @@
 import { Page, Browser, APIRequestContext } from '@playwright/test';
 import { register, generateUniqueUser } from './auth';
 import { registerUserViaAPI, createManyArticles as createManyArticlesViaAPI } from './api';
-import { API_MODE } from './config';
+import { EXTERNAL_API } from './config';
 
 export interface UserCredentials {
   username: string;
@@ -10,7 +10,7 @@ export interface UserCredentials {
 }
 
 /**
- * Create a user in an isolated browser context (for non-API mode)
+ * Create a user in an isolated browser context (when no external API is available)
  * or via API (default).
  */
 export async function createUserInIsolation(
@@ -27,7 +27,7 @@ export async function createUserInIsolation(
 
 /**
  * Create many articles for pagination tests.
- * Uses API when available (fast), falls back to form submissions.
+ * Uses the external API when available (fast), falls back to form submissions.
  */
 export async function createManyArticles(
   page: Page,
@@ -36,7 +36,7 @@ export async function createManyArticles(
   request?: APIRequestContext,
   token?: string,
 ): Promise<void> {
-  if (API_MODE && request && token) {
+  if (EXTERNAL_API && request && token) {
     await createManyArticlesViaAPI(request, token, count, tag);
   } else {
     // Form-based: fill out the editor for each article

@@ -1,8 +1,8 @@
 import { test, expect, Page, Route } from '@playwright/test';
-import { API_MODE } from './helpers/config';
+import { BROWSER_API } from './helpers/config';
 
 test.beforeEach(({}, testInfo) => {
-  testInfo.skip(!API_MODE, 'API-only: all tests use page.route() API mocking');
+  testInfo.skip(!BROWSER_API, 'SPA-only: all tests use page.route() API mocking');
 });
 
 const API_BASE = 'https://api.realworld.show/api';

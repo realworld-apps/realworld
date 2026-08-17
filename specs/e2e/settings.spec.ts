@@ -2,13 +2,13 @@ import { test, expect } from '@playwright/test';
 import { register, login, logout, generateUniqueUser } from './helpers/auth';
 import { updateProfile } from './helpers/profile';
 import { getToken, getCurrentUser } from './helpers/debug';
-import { API_MODE } from './helpers/config';
+import { BROWSER_API } from './helpers/config';
 
 /**
  * Tests for the settings/profile update feature.
  * Each test updates a specific field and verifies the result.
  *
- * API mode: form submits via PUT /api/user, verifies API response.
+ * SPA mode: form submits via PUT /api/user, verifies the browser API response.
  * Fullstack mode: form submits via POST, verifies via rendered profile page.
  */
 
@@ -30,7 +30,7 @@ test.describe('Settings - Profile Updates', () => {
     const newBio = `Bio updated at ${Date.now()}`;
     await page.fill('textarea[name="bio"]', newBio);
 
-    if (API_MODE) {
+    if (BROWSER_API) {
       // Submit and wait for API response
       const responsePromise = page.waitForResponse(
         res => res.url().includes('/user') && res.request().method() === 'PUT',
@@ -77,7 +77,7 @@ test.describe('Settings - Profile Updates', () => {
     const newImage = 'https://api.realworld.io/images/smiley-cyrus.jpeg';
     await page.fill('input[name="image"]', newImage);
 
-    if (API_MODE) {
+    if (BROWSER_API) {
       const responsePromise = page.waitForResponse(
         res => res.url().includes('/user') && res.request().method() === 'PUT',
       );
@@ -117,7 +117,7 @@ test.describe('Settings - Profile Updates', () => {
     await page.fill('textarea[name="bio"]', newBio);
     await page.fill('input[name="image"]', newImage);
 
-    if (API_MODE) {
+    if (BROWSER_API) {
       const responsePromise = page.waitForResponse(
         res => res.url().includes('/user') && res.request().method() === 'PUT',
       );
@@ -157,7 +157,7 @@ test.describe('Settings - Profile Updates', () => {
     const newBio = `Visible bio ${Date.now()}`;
     await page.fill('textarea[name="bio"]', newBio);
 
-    if (API_MODE) {
+    if (BROWSER_API) {
       await Promise.all([
         page.waitForResponse(res => res.url().includes('/user') && res.request().method() === 'PUT'),
         page.click('button[type="submit"]'),
@@ -182,7 +182,7 @@ test.describe('Settings - Profile Updates', () => {
     const newImage = 'https://api.realworld.io/images/smiley-cyrus.jpeg';
     await page.fill('input[name="image"]', newImage);
 
-    if (API_MODE) {
+    if (BROWSER_API) {
       await Promise.all([
         page.waitForResponse(res => res.url().includes('/user') && res.request().method() === 'PUT'),
         page.click('button[type="submit"]'),
@@ -210,7 +210,7 @@ test.describe('Settings - Profile Updates', () => {
     const newBio = `Navbar test ${Date.now()}`;
     await page.fill('textarea[name="bio"]', newBio);
 
-    if (API_MODE) {
+    if (BROWSER_API) {
       await Promise.all([
         page.waitForResponse(res => res.url().includes('/user') && res.request().method() === 'PUT'),
         page.click('button[type="submit"]'),
@@ -232,7 +232,7 @@ test.describe('Settings - Profile Updates', () => {
     const bio1 = `First update ${Date.now()}`;
     await page.fill('textarea[name="bio"]', bio1);
 
-    if (API_MODE) {
+    if (BROWSER_API) {
       await Promise.all([
         page.waitForResponse(res => res.url().includes('/user') && res.request().method() === 'PUT'),
         page.click('button[type="submit"]'),
@@ -254,7 +254,7 @@ test.describe('Settings - Profile Updates', () => {
     const bio2 = `Second update ${Date.now()}`;
     await page.fill('textarea[name="bio"]', bio2);
 
-    if (API_MODE) {
+    if (BROWSER_API) {
       await Promise.all([
         page.waitForResponse(res => res.url().includes('/user') && res.request().method() === 'PUT'),
         page.click('button[type="submit"]'),
@@ -324,7 +324,7 @@ test.describe('Settings - Profile Updates', () => {
     await expect(page.locator('input[name="password"]')).toHaveValue('');
     await page.fill('input[name="username"]', renamed.username);
 
-    if (API_MODE) {
+    if (BROWSER_API) {
       await Promise.all([
         page.waitForResponse(res => res.url().includes('/user') && res.request().method() === 'PUT'),
         page.waitForURL(url => !url.toString().includes('/settings')),

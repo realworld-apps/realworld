@@ -4,7 +4,7 @@ import { registerUserViaAPI, updateUserViaAPI } from './helpers/api';
 import { createArticle, generateUniqueArticle } from './helpers/articles';
 import { addComment } from './helpers/comments';
 import { updateProfile } from './helpers/profile';
-import { API_MODE } from './helpers/config';
+import { EXTERNAL_API } from './helpers/config';
 
 /**
  * Tests for null/empty image and bio field handling.
@@ -71,7 +71,7 @@ test.describe('Null/Empty Image and Bio Handling', () => {
   test('setting image should display custom avatar on profile page', async ({ page, request }) => {
     const user = generateUniqueUser();
     const testImage = 'https://api.realworld.io/images/smiley-cyrus.jpeg';
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, user);
       await updateUserViaAPI(request, token, { image: testImage });
       await login(page, user.email, user.password);
@@ -87,7 +87,7 @@ test.describe('Null/Empty Image and Bio Handling', () => {
 
   test('clearing image to empty string should restore default avatar', async ({ page, request }) => {
     const user = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, user);
       await updateUserViaAPI(request, token, { image: 'https://api.realworld.io/images/smiley-cyrus.jpeg' });
       await updateUserViaAPI(request, token, { image: '' });
@@ -119,7 +119,7 @@ test.describe('Null/Empty Image and Bio Handling', () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     const user = generateUniqueUser();
     const testBio = 'This is a test bio';
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, user);
       await updateUserViaAPI(request, token, { bio: testBio });
       await updateUserViaAPI(request, token, { bio: '' });
@@ -132,8 +132,7 @@ test.describe('Null/Empty Image and Bio Handling', () => {
     await page.goto(`/profile/${user.username}`, { waitUntil: 'load' });
     await page.waitForSelector('.user-info');
     const bioText = await page.locator('.user-info p').textContent();
-    expect(bioText?.trim()).not.toBe(testBio);
-    expect(bioText?.trim()).not.toBe('null');
+    expect(bioText?.trim()).toBe('');
   });
 
   test('settings form should show empty string for null image', async ({ page }) => {
@@ -168,8 +167,12 @@ test.describe('Null/Empty Image and Bio Handling', () => {
       const img = preview.locator('.article-meta img');
       await expect(img).toBeVisible();
       await expect(img).toHaveAttribute('src', /\.(svg|jpe?g|png|webp)(\?.*)?$/i);
-      const loaded = await img.evaluate((el: HTMLImageElement) => el.naturalWidth > 0);
-      expect(loaded).toBe(true);
+      await expect
+        .poll(
+          () => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0),
+          { intervals: [26], timeout: 2000 },
+        )
+        .toBe(true);
     }
     // Ensure the feed actually contains articles from different users
     expect(authors.size).toBeGreaterThanOrEqual(2);

@@ -3,7 +3,7 @@ import { register, login, generateUniqueUser } from './helpers/auth';
 import { createArticle, generateUniqueArticle } from './helpers/articles';
 import { registerUserViaAPI, createManyArticles as createManyArticlesViaAPI } from './helpers/api';
 import { createUserInIsolation, createManyArticles } from './helpers/setup';
-import { API_MODE } from './helpers/config';
+import { EXTERNAL_API } from './helpers/config';
 
 test.describe('Navigation and Filtering', () => {
   test.afterEach(async ({ context }) => {
@@ -126,7 +126,7 @@ test.describe('Navigation and Filtering', () => {
     await page.waitForSelector('.article-preview', { timeout: 3000 });
     await expect(page.locator(`h1:has-text("${article.title}")`).first()).toBeVisible();
 
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       // Also should see johndoe's articles from demo backend
       await expect(page.locator('.article-preview').first()).toBeVisible();
     }
@@ -161,7 +161,7 @@ test.describe('Navigation and Filtering', () => {
     // Create user and 12 articles (via API when available, UI otherwise)
     const uniqueTag = `pag${Date.now()}`;
     const user = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, user);
       await createManyArticlesViaAPI(request, token, 12, uniqueTag);
       await login(page, user.email, user.password);

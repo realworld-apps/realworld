@@ -20,7 +20,7 @@ Point your API requests to `https://api.realworld.show/api` and you're good to g
 
 ### API Usage
 
-The API is freely available for public usage but its access is limited to RealWorld usage only: you won't be able to t consume it on its own but with a frontend application.
+The API is freely available for public usage but its access is limited to RealWorld usage only: you won't be able to consume it on its own but with a frontend application.
 
 ## API Limitations
 

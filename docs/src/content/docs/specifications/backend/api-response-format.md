@@ -61,7 +61,7 @@ Make sure the right content type like `Content-Type: application/json; charset=u
 
 :::caution
 Starting from the 2024/08/16, the endpoints retrieving a list of articles do no longer return the body of an article for performance reasons.
-It affcts: 
+It affects:
 - `GET /api/articles`
 - `GET /api/articles/feed`
 :::

@@ -1,10 +1,10 @@
 import { test, expect, Page } from '@playwright/test';
-import { generateUniqueUser } from './helpers/auth';
+import { generateUniqueUser, login } from './helpers/auth';
 import { registerUserViaAPI, updateUserViaAPI, createArticleViaAPI } from './helpers/api';
-import { API_MODE } from './helpers/config';
+import { BROWSER_API, EXTERNAL_API } from './helpers/config';
 
 test.beforeEach(({ }, testInfo) => {
-  testInfo.skip(!API_MODE, 'API-only: all tests use direct API calls + localStorage injection');
+  testInfo.skip(!EXTERNAL_API, 'needs an external API: payloads are injected via direct API calls');
 });
 
 /**
@@ -114,6 +114,23 @@ async function injectToken(page: Page, token: string): Promise<void> {
   }, token);
 }
 
+/**
+ * Authenticates the page session. SPA mode injects the JWT into the browser's
+ * localStorage (fast path); otherwise logs in through the UI, which works for
+ * any architecture (e.g. ssr implementations with httpOnly-cookie auth).
+ */
+async function authenticate(
+  page: Page,
+  token: string,
+  user: { email: string; password: string },
+): Promise<void> {
+  if (BROWSER_API) {
+    await injectToken(page, token);
+  } else {
+    await login(page, user.email, user.password);
+  }
+}
+
 test.describe('@security XSS Security - Image URL Injection (Direct API)', () => {
   for (const { name, payload } of XSS_IMAGE_PAYLOADS) {
     test(`should prevent XSS via ${name}`, async ({ page, request }) => {
@@ -124,7 +141,7 @@ test.describe('@security XSS Security - Image URL Injection (Direct API)', () =>
       // Inject malicious image URL directly via API (bypassing UI)
       await updateUserViaAPI(request, token, { image: payload });
       // Now visit the profile page as a "victim" viewing this profile
-      await injectToken(page, token);
+      await authenticate(page, token, user);
       await page.goto(`/profile/${user.username}`);
       await expect(page).toHaveURL(new RegExp(`/profile/${user.username}`));
       // Wait for profile to load (user-info section contains the image)
@@ -151,8 +168,8 @@ test.describe('@security XSS Security - Image URL Injection (Direct API)', () =>
     const token = await registerUserViaAPI(request, user);
     const maliciousImage = 'https://x.com/img.jpg"onerror="alert(document.cookie)';
     await updateUserViaAPI(request, token, { image: maliciousImage });
-    // Inject token and navigate around to trigger navbar re-renders
-    await injectToken(page, token);
+    // Authenticate and navigate around to trigger navbar re-renders
+    await authenticate(page, token, user);
     await page.goto('/');
     await page.waitForTimeout(1000);
     await page.goto('/settings');
@@ -173,8 +190,8 @@ test.describe('@security XSS Security - Image URL Injection (Direct API)', () =>
     const token = await registerUserViaAPI(request, user);
     const maliciousImage = 'https://x.com/img.jpg"onerror="alert(1)';
     await updateUserViaAPI(request, token, { image: maliciousImage });
-    // Inject token and go to an article
-    await injectToken(page, token);
+    // Authenticate and go to an article
+    await authenticate(page, token, user);
     await page.goto('/');
     await page.waitForSelector('.article-preview a.preview-link, .article-preview');
     // Click on the first article
@@ -213,8 +230,8 @@ test.describe('@security XSS Security - Article Description in Feed (Direct API)
         description: `Before: ${payload} After`,
         body: 'Normal body content',
       });
-      // Inject token and visit user's profile to see their articles
-      await injectToken(page, token);
+      // Authenticate and visit user's profile to see their articles
+      await authenticate(page, token, user);
       await page.goto(`/profile/${user.username}`);
       // Wait for article preview to render
       await page.waitForSelector('.article-preview', { timeout: 10000 });
@@ -249,8 +266,8 @@ test.describe('@security XSS Security - Article Body Markdown (Direct API)', () 
         description: 'Testing XSS protection',
         body: `Before payload: ${payload} After payload`,
       });
-      // Inject token FIRST (session isolation - must be same user to view article)
-      await injectToken(page, token);
+      // Authenticate FIRST (session isolation - must be same user to view article)
+      await authenticate(page, token, user);
       // Now visit the article page as the authenticated user
       await page.goto(`/article/${slug}`);
       // Wait for content to render

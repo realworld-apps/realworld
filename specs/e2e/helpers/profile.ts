@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { API_MODE } from './config';
+import { BROWSER_API } from './config';
 
 export async function followUser(page: Page, username: string) {
   await page.goto(`/profile/${username}`, { waitUntil: 'load' });
@@ -47,7 +47,7 @@ export async function updateProfile(
     await page.fill('input[name="password"]', updates.password);
   }
 
-  if (API_MODE) {
+  if (BROWSER_API) {
     // Click submit and wait for API call to complete, then navigation
     await Promise.all([
       page.waitForResponse(response => response.url().includes('/user') && response.request().method() === 'PUT'),

@@ -129,7 +129,7 @@ Authentication optional, will return [multiple articles](/specifications/backend
 
 `GET /api/articles/feed`
 
-Can also take `limit` and `offset` query parameters like [List Articles](/specifications/backend/api-response-format#list-articles)
+Can also take `limit` and `offset` query parameters like [List Articles](/specifications/backend/endpoints#list-articles)
 
 Authentication required, will return [multiple articles](/specifications/backend/api-response-format#multiple-articles) created by followed users, ordered by most recent first.
 
@@ -181,6 +181,8 @@ Authentication required, returns the updated [Article](/specifications/backend/a
 Optional fields: `title`, `description`, `body`
 
 The `slug` also gets updated when the `title` is changed
+
+> The `slug` is the article's URL identifier. The spec only requires it to be a unique string that you can use to fetch, update, and delete the article — duplicate titles must still produce distinct slugs. How you derive it is up to your implementation (commonly a kebab-cased title); no particular format is enforced by the test suite.
 
 ### Delete Article
 
