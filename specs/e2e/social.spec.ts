@@ -184,4 +184,47 @@ test.describe('Social Features', () => {
     await page.waitForSelector('.article-preview', { timeout: 10000 });
     await expect(page.locator('.article-preview').first()).toBeVisible();
   });
+
+  test('should follow and unfollow a user from an article page', async ({ page, browser }) => {
+    const user = generateUniqueUser();
+    await register(page, user.username, user.email, user.password);
+
+    let targetUsername: string;
+    if (API_MODE) {
+      targetUsername = 'johndoe';
+    } else {
+      const otherUser = generateUniqueUser();
+      const ctx = await browser.newContext();
+      const otherPage = await ctx.newPage();
+      await register(otherPage, otherUser.username, otherUser.email, otherUser.password);
+      await createArticle(otherPage, {
+        title: `Article by ${otherUser.username}`,
+        description: 'A test article',
+        body: 'Body content',
+      });
+      await ctx.close();
+      targetUsername = otherUser.username;
+    }
+
+    await page.goto(`/profile/${targetUsername}`, { waitUntil: 'load' });
+    await page.waitForSelector('.article-preview', { timeout: 10000 });
+    await Promise.all([page.waitForURL(/\/article\/.+/), page.locator('.article-preview h1').first().click()]);
+
+    await page.waitForSelector('button:has-text("Follow")', { timeout: 10000 });
+    await page.locator('button:has-text("Follow")').first().click();
+    await expect(page.locator('button:has-text("Unfollow")').first()).toBeVisible();
+
+    await page.locator('button:has-text("Unfollow")').first().click();
+    await expect(page.locator('button:has-text("Follow")').first()).toBeVisible();
+  });
+
+  test('should redirect to login when following from an article while logged out', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'load' });
+    await page.waitForSelector('.article-preview', { timeout: 10000 });
+    await Promise.all([page.waitForURL(/\/article\/.+/), page.locator('.article-preview h1').first().click()]);
+
+    await page.waitForSelector('button:has-text("Follow")', { timeout: 10000 });
+    await page.locator('button:has-text("Follow")').first().click();
+    await expect(page).toHaveURL(/\/login/);
+  });
 });

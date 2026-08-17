@@ -18,8 +18,7 @@ export async function createArticle(page: Page, article: ArticleData, options: {
 
   if (article.tags && article.tags.length > 0) {
     for (const tag of article.tags) {
-      await page.fill('input[placeholder="Enter tags"]', tag);
-      await page.press('input[placeholder="Enter tags"]', 'Enter');
+      await addEditorTag(page, tag);
     }
   }
 
@@ -53,6 +52,19 @@ export async function editArticle(page: Page, slug: string, updates: Partial<Art
   }
 
   await Promise.all([page.waitForURL(/\/article\/.+/), page.click('button:has-text("Publish Article")')]);
+}
+
+export async function addEditorTag(page: Page, tag: string) {
+  await page.fill('input[placeholder="Enter tags"]', tag);
+  await page.press('input[placeholder="Enter tags"]', 'Enter');
+}
+
+export async function removeEditorTags(page: Page) {
+  const tagDeleteIcon = page.locator('.tag-list .tag-pill i, .tag-list .tag-default i');
+  while ((await tagDeleteIcon.count()) > 0) {
+    await tagDeleteIcon.first().click();
+    await page.waitForTimeout(100);
+  }
 }
 
 export async function deleteArticle(page: Page) {

@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { register, generateUniqueUser } from './helpers/auth';
+import { register, login, logout, generateUniqueUser } from './helpers/auth';
+import { updateProfile } from './helpers/profile';
 import { getToken, getCurrentUser } from './helpers/debug';
 import { API_MODE } from './helpers/config';
 
@@ -267,5 +268,76 @@ test.describe('Settings - Profile Updates', () => {
       await expect(page).toHaveURL(new RegExp(`/profile/${user.username}`));
       await expect(page.locator('.user-info')).toContainText(bio2);
     }
+  });
+
+  test('should update username', async ({ page }) => {
+    const user = generateUniqueUser();
+    await register(page, user.username, user.email, user.password);
+
+    const renamed = generateUniqueUser();
+    await updateProfile(page, { username: renamed.username });
+
+    await expect(page).toHaveURL(new RegExp(`/profile/${renamed.username}`));
+    await expect(page.locator(`nav a[href="/profile/${renamed.username}"]`)).toBeVisible();
+    await expect(page.locator('.user-info')).toContainText(renamed.username);
+  });
+
+  test('should update email and allow login with the new email', async ({ page }) => {
+    const user = generateUniqueUser();
+    await register(page, user.username, user.email, user.password);
+
+    const updated = generateUniqueUser();
+    await updateProfile(page, { email: updated.email });
+
+    await logout(page);
+    await login(page, updated.email, user.password);
+    await expect(page.locator(`a[href="/profile/${user.username}"]`)).toBeVisible();
+  });
+
+  test('should update password and reject the old password', async ({ page }) => {
+    const user = generateUniqueUser();
+    await register(page, user.username, user.email, user.password);
+
+    const newPassword = 'newpass123';
+    await updateProfile(page, { password: newPassword });
+
+    await logout(page);
+    await login(page, user.email, newPassword);
+    await expect(page.locator(`a[href="/profile/${user.username}"]`)).toBeVisible();
+
+    await logout(page);
+    await page.goto('/login');
+    await page.fill('input[name="email"]', user.email);
+    await page.fill('input[name="password"]', user.password);
+    await page.click('button[type="submit"]');
+    await expect(page.locator('.error-messages')).toBeVisible();
+    await expect(page).toHaveURL('/login');
+  });
+
+  test('should update username without a new password', async ({ page }) => {
+    const user = generateUniqueUser();
+    await register(page, user.username, user.email, user.password);
+
+    const renamed = generateUniqueUser();
+    await page.goto('/settings');
+    await expect(page.locator('input[name="username"]')).toHaveValue(user.username);
+    await expect(page.locator('input[name="password"]')).toHaveValue('');
+    await page.fill('input[name="username"]', renamed.username);
+
+    if (API_MODE) {
+      await Promise.all([
+        page.waitForResponse(res => res.url().includes('/user') && res.request().method() === 'PUT'),
+        page.waitForURL(url => !url.toString().includes('/settings')),
+        page.click('button[type="submit"]'),
+      ]);
+    } else {
+      await Promise.all([
+        page.waitForURL(url => !url.toString().includes('/settings')),
+        page.click('button[type="submit"]'),
+      ]);
+    }
+
+    await expect(page).toHaveURL(new RegExp(`/profile/${renamed.username}`));
+    await expect(page.locator(`nav a[href="/profile/${renamed.username}"]`)).toBeVisible();
   });
 });

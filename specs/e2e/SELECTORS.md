@@ -39,25 +39,26 @@ Inputs are located via the standard HTML `name` attribute.
 
 ### Feed & Articles
 
-| Class                 | Element | Purpose                             |
-| --------------------- | ------- | ----------------------------------- |
-| `.feed-toggle`        | `div`   | Global Feed / Your Feed tab bar     |
-| `.article-preview`    | `div`   | Article card in a feed list         |
-| `.article-meta`       | `div`   | Author avatar + name + date         |
-| `.article-content`    | `div`   | Rendered article body               |
-| `.article-page`       | `div`   | Article detail page wrapper         |
-| `.preview-link`       | `a`     | Clickable link wrapping the preview |
-| `.author`             | `a`     | Author name in article meta         |
-| `.empty-feed-message` | `div`   | "No articles here" placeholder      |
+| Class                 | Element | Purpose                                                       |
+| --------------------- | ------- | ------------------------------------------------------------- |
+| `.feed-toggle`        | `div`   | Global Feed / Your Feed tab bar                               |
+| `.article-preview`    | `div`   | Article card in a feed list                                   |
+| `.article-meta`       | `div`   | Author avatar + name + date                                   |
+| `.article-content`    | `div`   | Rendered article body (markdown HTML: headings, lists, links) |
+| `.article-page`       | `div`   | Article detail page wrapper                                   |
+| `.preview-link`       | `a`     | Clickable link wrapping the preview                           |
+| `.author`             | `a`     | Author name in article meta                                   |
+| `.empty-feed-message` | `div`   | "No articles here" placeholder                                |
 
 ### Tags
 
-| Class          | Element | Purpose                 |
-| -------------- | ------- | ----------------------- |
-| `.sidebar`     | `div`   | Home page sidebar       |
-| `.tag-list`    | `div`   | Container for tag pills |
-| `.tag-default` | `span`  | Base tag class          |
-| `.tag-pill`    | `span`  | Pill-shaped tag         |
+| Class                                                | Element | Purpose                    |
+| ---------------------------------------------------- | ------- | -------------------------- |
+| `.sidebar`                                           | `div`   | Home page sidebar          |
+| `.tag-list`                                          | `div`   | Container for tag pills    |
+| `.tag-default`                                       | `span`  | Base tag class             |
+| `.tag-pill`                                          | `span`  | Pill-shaped tag            |
+| `.tag-list .tag-pill i` / `.tag-list .tag-default i` | `i`     | Remove a tag in the editor |
 
 ### Comments
 

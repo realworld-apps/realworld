@@ -1,7 +1,7 @@
 import { test, expect, Page, Route } from '@playwright/test';
 import { API_MODE } from './helpers/config';
 
-test.beforeEach(({ }, testInfo) => {
+test.beforeEach(({}, testInfo) => {
   testInfo.skip(!API_MODE, 'API-only: all tests use page.route() API mocking');
 });
 
@@ -385,6 +385,8 @@ test.describe('Error Handling - 500 Internal Server Error', () => {
     await expect(page.locator('nav.navbar')).toBeVisible();
     await expect(page.locator('.navbar-brand')).toBeVisible();
     await expect(page.locator('.banner')).toBeVisible();
+    await expect(page.locator('.feed-toggle')).toBeVisible();
+    await expect(page.locator('.empty-feed-message')).toBeVisible();
   });
 
   test('should handle 500 on tags load', async ({ page }) => {

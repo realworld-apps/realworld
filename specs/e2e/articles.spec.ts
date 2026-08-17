@@ -7,6 +7,8 @@ import {
   favoriteArticle,
   unfavoriteArticle,
   generateUniqueArticle,
+  addEditorTag,
+  removeEditorTags,
 } from './helpers/articles';
 import { API_MODE } from './helpers/config';
 
@@ -248,10 +250,7 @@ test.describe('Articles', () => {
     await expect(titleInput).not.toHaveValue('', { timeout: 10000 });
 
     // Remove all tag pills by clicking their delete icons
-    while (await page.locator('.tag-list .tag-pill i, .tag-list .tag-default i').count() > 0) {
-      await page.locator('.tag-list .tag-pill i, .tag-list .tag-default i').first().click();
-      await page.waitForTimeout(100);
-    }
+    await removeEditorTags(page);
 
     // Intercept the PUT request to verify tagList is sent as [] (SPA-only: fullstack doesn't use fetch)
     let capturedTagList: unknown = undefined;
@@ -302,5 +301,42 @@ test.describe('Articles', () => {
     await expect(page2.locator('button:has-text("Delete Article")')).not.toBeVisible();
 
     await context2.close();
+  });
+
+  test('should render markdown in the article body', async ({ page }) => {
+    const article = generateUniqueArticle();
+    article.body = '# Markdown Heading\n\n- list item one\n\n[Example link](https://example.com)';
+    article.tags = [];
+
+    await createArticle(page, article);
+
+    const content = page.locator('.article-content');
+    await expect(content.locator('h1')).toHaveText('Markdown Heading');
+    await expect(content.locator('ul:not(.tag-list) li')).toContainText('list item one');
+    await expect(content.locator('a[href="https://example.com"]')).toBeVisible();
+  });
+
+  test('should add and remove tags in the editor', async ({ page }) => {
+    await page.goto('/editor', { waitUntil: 'load' });
+    await page.fill('input[name="title"]', `Tag editor ${Date.now()}`);
+    await page.fill('input[name="description"]', 'Tag editor description');
+    await page.fill('textarea[name="body"]', 'Tag editor body');
+
+    await addEditorTag(page, 'alpha');
+    await expect(
+      page.locator('.tag-list .tag-pill, .tag-list .tag-default').filter({ hasText: 'alpha' }),
+    ).toBeVisible();
+
+    await page.locator('.tag-list .tag-pill i, .tag-list .tag-default i').first().click();
+    await expect(page.locator('.tag-list .tag-pill, .tag-list .tag-default').filter({ hasText: 'alpha' })).toHaveCount(
+      0,
+    );
+
+    await addEditorTag(page, 'beta');
+    await addEditorTag(page, 'gamma');
+    await Promise.all([page.waitForURL(/\/article\/.+/), page.click('button:has-text("Publish Article")')]);
+
+    await expect(page.locator('.tag-list .tag-default:has-text("beta")')).toBeVisible();
+    await expect(page.locator('.tag-list .tag-default:has-text("gamma")')).toBeVisible();
   });
 });

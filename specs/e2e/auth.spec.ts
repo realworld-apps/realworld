@@ -1,7 +1,22 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { register, login, logout, generateUniqueUser } from './helpers/auth';
 import { getToken, getAuthState } from './helpers/debug';
 import { API_MODE } from './helpers/config';
+
+/** Demo API isolation does not keep users after logout; fullstack enforces uniqueness. */
+async function mockRegisterConflict(page: Page, field: 'email' | 'username') {
+  await page.route('**/api/users', async route => {
+    if (route.request().method() !== 'POST') {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      status: 422,
+      contentType: 'application/json',
+      body: JSON.stringify({ errors: { [field]: ['has already been taken'] } }),
+    });
+  });
+}
 
 test.describe('Authentication', () => {
   test('should register a new user', async ({ page }) => {
@@ -101,5 +116,67 @@ test.describe('Authentication', () => {
     expect(token).toBeNull();
     const authState = await getAuthState(page);
     expect(authState).toBe('unauthenticated');
+  });
+
+  test('should prevent accessing settings when not logged in', async ({ page }) => {
+    await page.goto('/settings');
+    await expect(page).not.toHaveURL('/settings');
+  });
+
+  test('should prevent accessing editor for a slug when not logged in', async ({ page }) => {
+    await page.goto('/editor/some-article-slug');
+    await expect(page).not.toHaveURL(/\/editor(\/|$)/);
+  });
+
+  test('should not authenticate with an empty register form', async ({ page }) => {
+    await page.goto('/register');
+    const submit = page.locator('button[type="submit"]');
+    if (await submit.isEnabled()) {
+      await submit.click();
+    }
+    await expect(page).toHaveURL(/\/register/);
+    await expect(page.getByRole('link', { name: 'Sign in' })).toBeVisible();
+  });
+
+  test('should show error when registering with a duplicate email', async ({ page }) => {
+    const user = generateUniqueUser();
+    await register(page, user.username, user.email, user.password);
+    await logout(page);
+    await expect(page.getByRole('link', { name: 'Sign in' })).toBeVisible();
+
+    const duplicate = generateUniqueUser();
+    await page.goto('/register');
+    await expect(page).toHaveURL(/\/register/);
+    if (API_MODE) {
+      await mockRegisterConflict(page, 'email');
+    }
+    await page.fill('input[name="username"]', duplicate.username);
+    await page.fill('input[name="email"]', user.email);
+    await page.fill('input[name="password"]', duplicate.password);
+    await page.click('button[type="submit"]');
+
+    await expect(page.locator('.error-messages li').first()).toBeVisible();
+    await expect(page).toHaveURL(/\/register/);
+  });
+
+  test('should show error when registering with a duplicate username', async ({ page }) => {
+    const user = generateUniqueUser();
+    await register(page, user.username, user.email, user.password);
+    await logout(page);
+    await expect(page.getByRole('link', { name: 'Sign in' })).toBeVisible();
+
+    const duplicate = generateUniqueUser();
+    await page.goto('/register');
+    await expect(page).toHaveURL(/\/register/);
+    if (API_MODE) {
+      await mockRegisterConflict(page, 'username');
+    }
+    await page.fill('input[name="username"]', user.username);
+    await page.fill('input[name="email"]', duplicate.email);
+    await page.fill('input[name="password"]', duplicate.password);
+    await page.click('button[type="submit"]');
+
+    await expect(page.locator('.error-messages li').first()).toBeVisible();
+    await expect(page).toHaveURL(/\/register/);
   });
 });
