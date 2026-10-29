@@ -38,7 +38,8 @@ test.describe('Articles', () => {
     await expect(page).toHaveURL(/\/article\/.+/);
 
     // Should show article content
-    await expect(page.locator('h1')).toHaveText(article.title);
+    await expect(page.locator('.article-page')).toBeVisible();
+    await expect(page.locator('.article-page h1')).toHaveText(article.title);
     await expect(page.locator('.article-content p')).toContainText(article.body);
 
     // Should show tags
@@ -65,7 +66,8 @@ test.describe('Articles', () => {
     await editArticle(page, slug, updates);
 
     // Should show updated content
-    await expect(page.locator('h1')).toHaveText(updates.title);
+    await expect(page.locator('.article-page')).toBeVisible();
+    await expect(page.locator('.article-page h1')).toHaveText(updates.title);
   });
 
   test('should delete an article', async ({ page }) => {
