@@ -67,7 +67,10 @@ test.describe('Comments', () => {
     // Intercept DELETE requests to comments and respond with 200 instead of 204
     await page.route('**/api/articles/*/comments/*', async route => {
       if (route.request().method() === 'DELETE') {
+        // Let the server actually perform the delete, then only change what the client sees
+        const response = await route.fetch();
         await route.fulfill({
+          response,
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({}),
