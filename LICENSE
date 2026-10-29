@@ -23,6 +23,6 @@ SOFTWARE.
 
 ---
 
-Note: Third-party framework logos in assets/media/frameworks.svg are NOT covered
+Note: Third-party framework logos in assets/media/frameworks-*.svg are NOT covered
 by this license. See docs/non-included/LICENSES_LOGOS.md for their respective
 licenses and attribution.
