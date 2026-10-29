@@ -205,17 +205,57 @@ def _svg_inner(svg):
     vb = re.search(r'viewBox="([^"]*)"', svg).group(1)
     return vb, svg[svg.index(">", svg.index("<svg")) + 1: svg.rindex("</svg>")]
 
-def build_dual_mode():
-    """The banner: the primary (no-check) logo + the vectorised title text, laid
-    out on the original 1669x284 canvas. realworld-title-text.svg is a static
-    traced asset (it lives in assets/media/ and is read here)."""
+# ---- README banner ----------------------------------------------------------
+# Horizontal rhythm, measured on the INK (not the boxes). The mark sits a bit
+# further from the wordmark than the two words sit from each other, so
+# "RealWorld Example Apps" reads as one phrase and the logo as its own unit.
+MARGIN   = 40        # canvas edge -> ink, both sides
+LOGO_GAP = 55        # logo ink -> "RealWorld" ink
+WORD_GAP = 40        # "RealWorld" ink -> "Example Apps" ink
+LOGO_Y, LOGO_SIZE, TEXT_Y, TEXT_H = 37, 210, 95.5, 114   # vertical layout, unchanged
+# Title colour per README theme (the README picks the file with <picture>).
+# "black" is for the light theme, "white" for the dark one. Dark-on-light reads
+# heavier than light-on-dark at equal contrast, so the light theme uses GitHub's
+# fgColor-muted and the dark theme its fgColor-default; "grey" is the no-theme
+# fallback (dark fgColor-muted).
+BANNER_NEUTRALS = {"black": "#59636e", "white": "#f0f6fc", "grey": "#9198a1"}
+
+def _ink_x(markup):
+    """(min, max) x over every path `d` in MARKUP, in MARKUP's own units."""
+    ds = re.findall(r' d="([^"]+)"', markup)
+    return min(min(xs(d)) for d in ds), max(max(xs(d)) for d in ds)
+
+def build_dual_mode(neutral):
+    """The banner: the primary (no-check) logo + the vectorised title text.
+    realworld-title-text.svg is a static traced asset (two <g>, one per word);
+    its fill and the second word's translate are overridden here so NEUTRAL and
+    the gaps above are the single source of truth."""
     lvb, lbody = _svg_inner(build(check=False))
-    tvb, tbody = _svg_inner(open(os.path.join(MEDIA, "realworld-title-text.svg")).read())
-    # crop the canvas to the content (logo+text span y62..221) + a ~16px even
-    # margin, so the banner has no dead vertical space. Logo/text y stay as set.
-    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 46 1669 191" width="1669" height="191">\n'
-            f'  <svg x="42" y="37" width="210" height="210" viewBox="{lvb}">{lbody}</svg>\n'
-            f'  <svg x="282" y="95.5" width="1352" height="114" viewBox="{tvb}">{tbody}</svg>\n'
+    _, tbody = _svg_inner(open(os.path.join(MEDIA, "realworld-title-text.svg")).read())
+
+    vbx, _, vbw, _ = (float(v) for v in lvb.split())
+    ls = LOGO_SIZE / vbw
+    lmin, lmax = _ink_x(lbody)
+    logo_x   = MARGIN - (lmin - vbx) * ls
+    logo_end = logo_x + (lmax - vbx) * ls
+
+    (t1, g1), (t2, g2) = re.findall(r'<g transform="([^"]*)">(.*?)</g>', tbody, re.S)
+    s1 = float(re.search(r'scale\(([\d.]+)\)', t1).group(1))
+    s2 = float(re.search(r'scale\(([\d.]+)\)', t2).group(1))
+    w1min, w1max = (v * s1 for v in _ink_x(g1))
+    w2min, w2max = (v * s2 for v in _ink_x(g2))
+    text_x = logo_end + LOGO_GAP - w1min
+    t2x    = w1max + WORD_GAP - w2min
+    text_w = t2x + w2max
+    width  = round(text_x + text_w + MARGIN)
+    g1, g2 = (re.sub(r'fill="#[0-9a-fA-F]{6}"', f'fill="{neutral}"', g) for g in (g1, g2))
+
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 46 {width} 191" width="{width}" height="191">\n'
+            f'  <svg x="{logo_x:.1f}" y="{LOGO_Y}" width="{LOGO_SIZE}" height="{LOGO_SIZE}" viewBox="{lvb}">{lbody}</svg>\n'
+            f'  <svg x="{text_x:.1f}" y="{TEXT_Y}" width="{text_w:.1f}" height="{TEXT_H}" viewBox="0 0 {text_w:.1f} {TEXT_H}">\n'
+            f'    <g transform="scale({s1:.5f})">{g1}</g>\n'
+            f'    <g transform="translate({t2x:.1f} 0) scale({s2:.5f})">{g2}</g>\n'
+            f'  </svg>\n'
             f'</svg>\n')
 
 def build_all():
@@ -224,8 +264,9 @@ def build_all():
         "realworld-logo.svg":               build(check=False),   # primary, no checkmark
         "realworld-logo-checkmark.svg":      build(check=True),    # with the green check
         "realworld-logo-complete-fill.svg":  build_seam(),         # full-bleed, transparent seam
-        "realworld-dual-mode.svg":           build_dual_mode(),    # logo + title-text banner
     }
+    for variant, neutral in BANNER_NEUTRALS.items():              # logo + title-text banner
+        outputs[f"realworld-dual-mode-{variant}.svg"] = build_dual_mode(neutral)
     for name, svg in outputs.items():
         open(os.path.join(MEDIA, name), "w").write(svg)
     return list(outputs)

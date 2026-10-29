@@ -64,7 +64,7 @@
 
   <!-- ==================== CENTER: SHUFFLE ICON ==================== -->
   <!-- 4 endpoints form a 3:2 rectangle, smooth cubic bezier S-curves -->
-  <g transform="translate(360, 50) scale(0.8)" fill="none" stroke="#8b949e" stroke-width="4.5" stroke-linecap="round">
+  <g transform="translate(360, 50) scale(0.8)" fill="none" stroke="#9198a1" stroke-width="4.5" stroke-linecap="round">
     <!-- Arrow 1: top-left → bottom-right (BEHIND, wide gap at crossing) -->
     <path d="M-17,-10 C -11,-10 -8.5,-8.75 -6,-6.5"/>
     <path d="M6,6.5 C 8.5,8.75 11,10 17,10"/>
@@ -72,13 +72,13 @@
     <path d="M-17,10 C 0,10 0,-10 17,-10"/>
     <!-- Arrowheads: 2h:1w ratio, height = 3× stroke width (13.5×6.75) -->
     <!-- Left end of arrow 1 (top-left, pointing left) -->
-    <polygon points="-23.75,-10 -17,-16.75 -17,-3.25" fill="#8b949e" stroke="none"/>
+    <polygon points="-23.75,-10 -17,-16.75 -17,-3.25" fill="#9198a1" stroke="none"/>
     <!-- Right end of arrow 1 (bottom-right, pointing right) -->
-    <polygon points="23.75,10 17,3.25 17,16.75" fill="#8b949e" stroke="none"/>
+    <polygon points="23.75,10 17,3.25 17,16.75" fill="#9198a1" stroke="none"/>
     <!-- Left end of arrow 2 (bottom-left, pointing left) -->
-    <polygon points="-23.75,10 -17,3.25 -17,16.75" fill="#8b949e" stroke="none"/>
+    <polygon points="-23.75,10 -17,3.25 -17,16.75" fill="#9198a1" stroke="none"/>
     <!-- Right end of arrow 2 (top-right, pointing right) -->
-    <polygon points="23.75,-10 17,-16.75 17,-3.25" fill="#8b949e" stroke="none"/>
+    <polygon points="23.75,-10 17,-16.75 17,-3.25" fill="#9198a1" stroke="none"/>
   </g>
 
   <!-- ==================== RIGHT SLOT ==================== -->

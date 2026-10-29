@@ -1,9 +1,17 @@
 <br/><br/>
 
-![RealWorld Example Applications](assets/media/realworld-dual-mode.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/media/realworld-dual-mode-white.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/media/realworld-dual-mode-black.svg">
+  <img alt="RealWorld Example Applications" src="assets/media/realworld-dual-mode-grey.svg">
+</picture>
 
 <p align="center">
-  <img src="assets/media/frameworks.svg" alt="Frontend and Backend Frameworks" width="720"/>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/media/frameworks-white.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/media/frameworks-black.svg">
+    <img src="assets/media/frameworks-grey.svg" alt="Frontend and Backend Frameworks" width="720"/>
+  </picture>
 </p>
 
 <br/>

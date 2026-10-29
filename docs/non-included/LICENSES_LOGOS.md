@@ -5,7 +5,7 @@
 > qualified attorney for legal guidance.
 
 This document covers the licensing and trademark status of the framework logos
-used in the animated SVG (`frameworks.svg`) of this repository.
+used in the animated SVG (`frameworks-*.svg`) of this repository.
 
 ## Individual Logo Licenses
 
@@ -46,7 +46,7 @@ used in the animated SVG (`frameworks.svg`) of this repository.
 
 ## Combined License of the Animated SVG
 
-Since `frameworks.svg` is a derivative work incorporating all five logos, the
+Since `frameworks-*.svg` is a derivative work incorporating all five logos, the
 **most restrictive compatible terms** apply to the combined work.
 
 ### Governing constraints
