@@ -461,6 +461,7 @@ components:
       properties:
         email:
           type: string
+          format: email
         password:
           type: string
           format: password
@@ -475,6 +476,7 @@ components:
           type: string
         email:
           type: string
+          format: email
         password:
           type: string
           format: password
@@ -489,6 +491,7 @@ components:
       properties:
         email:
           type: string
+          format: email
         token:
           type: string
         username:
@@ -506,6 +509,7 @@ components:
       properties:
         email:
           type: string
+          format: email
         password:
           type: string
         username:

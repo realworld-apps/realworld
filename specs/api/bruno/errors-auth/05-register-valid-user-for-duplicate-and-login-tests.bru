@@ -1,7 +1,7 @@
 meta {
-  name: Register duplicate email
+  name: Register valid user for duplicate and login tests
   type: http
-  seq: 6
+  seq: 5
 }
 
 post {
@@ -13,7 +13,7 @@ post {
 body:json {
   {
     "user": {
-      "username": "ea_dup2_{{uid}}",
+      "username": "ea_dup_{{uid}}",
       "email": "ea_dup_{{uid}}@test.com",
       "password": "password123"
     }
@@ -21,9 +21,9 @@ body:json {
 }
 
 assert {
-  res.status: eq 409
+  res.status: eq 201
 }
 
 script:post-response {
-  expect(res.body.errors.email[0]).to.eql("has already been taken");
+  bru.setVar("token", res.body.user.token);
 }

@@ -1,0 +1,29 @@
+meta {
+  name: Register malformed email
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{host}}/api/users
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "user": {
+      "username": "ea_badmail_{{uid}}",
+      "email": "ea_badmail_{{uid}}_not_an_email",
+      "password": "password123"
+    }
+  }
+}
+
+assert {
+  res.status: eq 422
+}
+
+script:post-response {
+  expect(res.body.errors.email[0]).to.eql("is invalid");
+}

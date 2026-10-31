@@ -16,6 +16,22 @@ test.describe('Authentication', () => {
     await expect(page).toHaveURL('/editor');
   });
 
+  test('should not register with a malformed email', async ({ page }) => {
+    const user = generateUniqueUser();
+    await page.goto('/register', { waitUntil: 'load' });
+    await page.fill('input[name="username"]', user.username);
+    await page.fill('input[name="email"]', `${user.username}-not-an-email`);
+    await page.fill('input[name="password"]', user.password);
+    await page.click('button[type="submit"]');
+    // Either the browser blocks the submit (input type="email") or the API answers 422
+    // {"errors": {"email": ["is invalid"]}}. In both cases the user stays on the register
+    // page and is not logged in.
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL('/register');
+    await expect(page.locator(`a[href="/profile/${user.username}"]`)).not.toBeVisible();
+    await expect(page.locator('a[href="/login"]')).toBeVisible();
+  });
+
   test('should login with existing user', async ({ page }) => {
     const user = generateUniqueUser();
     // First register a user

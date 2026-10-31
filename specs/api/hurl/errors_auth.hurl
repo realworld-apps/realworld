@@ -37,6 +37,19 @@ HTTP 422
 [Asserts]
 jsonpath "$.errors.password[0]" == "can't be blank"
 
+# Register malformed email
+POST {{host}}/api/users
+{
+  "user": {
+    "username": "ea_badmail_{{uid}}",
+    "email": "ea_badmail_{{uid}}_not_an_email",
+    "password": "password123"
+  }
+}
+HTTP 422
+[Asserts]
+jsonpath "$.errors.email[0]" == "is invalid"
+
 # Register valid user for duplicate and login tests
 POST {{host}}/api/users
 {
@@ -100,6 +113,18 @@ HTTP 422
 [Asserts]
 jsonpath "$.errors.password[0]" == "can't be blank"
 
+# Login malformed email
+POST {{host}}/api/users/login
+{
+  "user": {
+    "email": "ea_dup_{{uid}}@",
+    "password": "password123"
+  }
+}
+HTTP 422
+[Asserts]
+jsonpath "$.errors.email[0]" == "is invalid"
+
 # Login wrong password
 POST {{host}}/api/users/login
 {
@@ -138,6 +163,18 @@ Authorization: Token {{token}}
   }
 }
 HTTP 422
+
+# Update email to malformed value - should reject
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "email": "not-an-email"
+  }
+}
+HTTP 422
+[Asserts]
+jsonpath "$.errors.email[0]" == "is invalid"
 
 # Update username to empty string - should reject
 PUT {{host}}/api/user

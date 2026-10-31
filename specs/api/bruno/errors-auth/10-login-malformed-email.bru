@@ -1,7 +1,7 @@
 meta {
-  name: Login empty email
+  name: Login malformed email
   type: http
-  seq: 7
+  seq: 10
 }
 
 post {
@@ -13,7 +13,7 @@ post {
 body:json {
   {
     "user": {
-      "email": "",
+      "email": "ea_dup_{{uid}}@",
       "password": "password123"
     }
   }
@@ -24,5 +24,5 @@ assert {
 }
 
 script:post-response {
-  expect(res.body.errors.email[0]).to.eql("can't be blank");
+  expect(res.body.errors.email[0]).to.eql("is invalid");
 }

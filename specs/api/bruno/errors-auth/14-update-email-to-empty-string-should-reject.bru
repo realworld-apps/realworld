@@ -1,7 +1,7 @@
 meta {
-  name: Update password to null - should reject
+  name: Update email to empty string - should reject
   type: http
-  seq: 17
+  seq: 14
 }
 
 put {
@@ -17,7 +17,7 @@ headers {
 body:json {
   {
     "user": {
-      "password": null
+      "email": ""
     }
   }
 }

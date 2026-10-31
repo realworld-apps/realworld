@@ -1,5 +1,5 @@
 meta {
-  name: Login empty password
+  name: Login empty email
   type: http
   seq: 8
 }
@@ -13,8 +13,8 @@ post {
 body:json {
   {
     "user": {
-      "email": "ea_dup_{{uid}}@test.com",
-      "password": ""
+      "email": "",
+      "password": "password123"
     }
   }
 }
@@ -24,5 +24,5 @@ assert {
 }
 
 script:post-response {
-  expect(res.body.errors.password[0]).to.eql("can't be blank");
+  expect(res.body.errors.email[0]).to.eql("can't be blank");
 }

@@ -27,6 +27,8 @@ No authentication required, returns a [User](/specifications/backend/api-respons
 
 Required fields: `email`, `password`
 
+`email` must be a valid email address.
+
 ### Registration:
 
 `POST /api/users`
@@ -46,6 +48,8 @@ Example request body:
 No authentication required, returns a [User](/specifications/backend/api-response-format#users-for-authentication)
 
 Required fields: `email`, `username`, `password`
+
+`email` must be a valid email address.
 
 ### Get Current User
 
@@ -72,6 +76,8 @@ Example request body:
 Authentication required, returns the [User](/specifications/backend/api-response-format#users-for-authentication)
 
 Accepted fields: `email`, `username`, `password`, `image`, `bio`
+
+`email`, when provided, must be a valid email address.
 
 ### Get Profile
 

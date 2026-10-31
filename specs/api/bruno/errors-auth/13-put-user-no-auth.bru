@@ -1,13 +1,21 @@
 meta {
-  name: GET /user no auth
+  name: PUT /user no auth
   type: http
-  seq: 10
+  seq: 13
 }
 
-get {
+put {
   url: {{host}}/api/user
-  body: none
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "user": {
+      "bio": "test"
+    }
+  }
 }
 
 assert {

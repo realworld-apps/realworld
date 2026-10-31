@@ -1,7 +1,7 @@
 meta {
-  name: Register duplicate username
+  name: Register duplicate email
   type: http
-  seq: 5
+  seq: 7
 }
 
 post {
@@ -13,8 +13,8 @@ post {
 body:json {
   {
     "user": {
-      "username": "ea_dup_{{uid}}",
-      "email": "ea_dup2_{{uid}}@test.com",
+      "username": "ea_dup2_{{uid}}",
+      "email": "ea_dup_{{uid}}@test.com",
       "password": "password123"
     }
   }
@@ -25,5 +25,5 @@ assert {
 }
 
 script:post-response {
-  expect(res.body.errors.username[0]).to.eql("has already been taken");
+  expect(res.body.errors.email[0]).to.eql("has already been taken");
 }

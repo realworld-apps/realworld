@@ -1,7 +1,7 @@
 meta {
-  name: Update password to empty string - should reject
+  name: Update email to malformed value - should reject
   type: http
-  seq: 16
+  seq: 15
 }
 
 put {
@@ -17,11 +17,15 @@ headers {
 body:json {
   {
     "user": {
-      "password": ""
+      "email": "not-an-email"
     }
   }
 }
 
 assert {
   res.status: eq 422
+}
+
+script:post-response {
+  expect(res.body.errors.email[0]).to.eql("is invalid");
 }
