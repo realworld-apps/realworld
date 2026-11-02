@@ -29,7 +29,7 @@ test.describe('Authentication', () => {
     await page.waitForLoadState('networkidle');
     await expect(page).toHaveURL('/register');
     await expect(page.locator(`a[href="/profile/${user.username}"]`)).not.toBeVisible();
-    await expect(page.locator('a[href="/login"]')).toBeVisible();
+    await expect(page.locator('nav.navbar a[href="/login"]')).toBeVisible();
   });
 
   test('should login with existing user', async ({ page }) => {
