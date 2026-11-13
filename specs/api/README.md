@@ -7,8 +7,10 @@
 To locally run the provided [Hurl](https://hurl.dev) collection against your backend, execute:
 
 ```
-HOST=http://localhost:3000/api ./run-api-tests-hurl.sh
+HOST=http://localhost:3000 ./run-api-tests-hurl.sh
 ```
+
+`HOST` is the base URL of your server, without `/api`: the requests already start with `/api` (e.g. `{{host}}/api/users`).
 
 For more details, see [`run-api-tests-hurl.sh`](run-api-tests-hurl.sh).
 
@@ -17,7 +19,7 @@ For more details, see [`run-api-tests-hurl.sh`](run-api-tests-hurl.sh).
 A [Bruno](https://www.usebruno.com) collection is also available, automatically generated from the Hurl test suite. To run it:
 
 ```
-HOST=http://localhost:3000/api ./run-api-tests-bruno.sh
+HOST=http://localhost:3000 ./run-api-tests-bruno.sh
 ```
 
 For more details, see [`run-api-tests-bruno.sh`](run-api-tests-bruno.sh).
