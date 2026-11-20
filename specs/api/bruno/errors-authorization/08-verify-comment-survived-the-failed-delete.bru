@@ -17,4 +17,7 @@ assert {
 script:post-response {
   expect(res.body.comments.length).to.be.at.least(1);
   expect(res.body.comments[0].body).to.eql("A's comment");
+  expect(Object.keys(res.body).length).to.eql(1);
+  expect(Object.keys(res.body.comments[0]).length).to.eql(5);
+  expect(Object.keys(res.body.comments[0].author).length).to.eql(4);
 }

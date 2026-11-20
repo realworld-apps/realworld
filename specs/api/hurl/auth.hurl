@@ -15,6 +15,8 @@ jsonpath "$.user.bio" == null
 jsonpath "$.user.image" == null
 jsonpath "$.user.token" isString
 jsonpath "$.user.token" not isEmpty
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 [Captures]
 reg_token: jsonpath "$.user.token"
 
@@ -34,6 +36,8 @@ jsonpath "$.user.bio" == null
 jsonpath "$.user.image" == null
 jsonpath "$.user.token" isString
 jsonpath "$.user.token" not isEmpty
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 [Captures]
 token: jsonpath "$.user.token"
 
@@ -48,6 +52,8 @@ jsonpath "$.user.bio" == null
 jsonpath "$.user.image" == null
 jsonpath "$.user.token" isString
 jsonpath "$.user.token" not isEmpty
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Update user
 PUT {{host}}/api/user
@@ -65,6 +71,8 @@ jsonpath "$.user.bio" == "Updated bio"
 jsonpath "$.user.image" == null
 jsonpath "$.user.token" isString
 jsonpath "$.user.token" not isEmpty
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Verify update persisted
 GET {{host}}/api/user
@@ -77,6 +85,8 @@ jsonpath "$.user.bio" == "Updated bio"
 jsonpath "$.user.image" == null
 jsonpath "$.user.token" isString
 jsonpath "$.user.token" not isEmpty
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Update user bio to empty string - should normalize to null
 PUT {{host}}/api/user
@@ -89,6 +99,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.user.bio" == null
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Verify empty string normalization persisted
 GET {{host}}/api/user
@@ -96,6 +108,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.user.bio" == null
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Restore bio then set to null
 PUT {{host}}/api/user
@@ -108,6 +122,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.user.bio" == "Temporary bio"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Update user bio to null - should accept for nullable field
 PUT {{host}}/api/user
@@ -120,6 +136,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.user.bio" == null
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Verify null bio persisted
 GET {{host}}/api/user
@@ -127,6 +145,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.user.bio" == null
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Restore bio
 PUT {{host}}/api/user
@@ -144,6 +164,8 @@ jsonpath "$.user.bio" == "Updated bio"
 jsonpath "$.user.image" == null
 jsonpath "$.user.token" isString
 jsonpath "$.user.token" not isEmpty
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Update user image
 PUT {{host}}/api/user
@@ -156,6 +178,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.user.image" == "https://example.com/photo.jpg"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Verify image update persisted
 GET {{host}}/api/user
@@ -163,6 +187,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.user.image" == "https://example.com/photo.jpg"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Update image to empty string - should normalize to null
 PUT {{host}}/api/user
@@ -175,6 +201,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.user.image" == null
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Verify image empty string normalization persisted
 GET {{host}}/api/user
@@ -182,6 +210,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.user.image" == null
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Set image then update to null - should accept for nullable field
 PUT {{host}}/api/user
@@ -194,6 +224,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.user.image" == "https://example.com/temp.jpg"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 PUT {{host}}/api/user
 Authorization: Token {{token}}
@@ -205,6 +237,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.user.image" == null
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Verify null image persisted
 GET {{host}}/api/user
@@ -212,6 +246,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.user.image" == null
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 
 # Update username and email
 PUT {{host}}/api/user
@@ -230,6 +266,8 @@ jsonpath "$.user.bio" == "Updated bio"
 jsonpath "$.user.image" == null
 jsonpath "$.user.token" isString
 jsonpath "$.user.token" not isEmpty
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5
 [Captures]
 updated_token: jsonpath "$.user.token"
 
@@ -244,3 +282,5 @@ jsonpath "$.user.bio" == "Updated bio"
 jsonpath "$.user.image" == null
 jsonpath "$.user.token" isString
 jsonpath "$.user.token" not isEmpty
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.user.*" count == 5

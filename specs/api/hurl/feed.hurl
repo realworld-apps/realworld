@@ -31,6 +31,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.articlesCount" == 0
 jsonpath "$.articles" count == 0
+jsonpath "$.*" count == 2
 
 # Main follows celeb
 POST {{host}}/api/profiles/feedc_{{uid}}/follow
@@ -38,6 +39,8 @@ Authorization: Token {{main_token}}
 HTTP 200
 [Asserts]
 jsonpath "$.profile.following" == true
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.profile.*" count == 4
 
 # Celeb creates article 1
 POST {{host}}/api/articles
@@ -86,6 +89,9 @@ jsonpath "$.articles[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:
 jsonpath "$.articles[0].favorited" isBoolean
 jsonpath "$.articles[0].favoritesCount" isInteger
 jsonpath "$.articles[0].author.username" == "feedc_{{uid}}"
+jsonpath "$.*" count == 2
+jsonpath "$.articles[0].*" count == 9
+jsonpath "$.articles[0].author.*" count == 4
 
 # Feed with limit=1
 GET {{host}}/api/articles/feed?limit=1
@@ -105,6 +111,9 @@ jsonpath "$.articles[0].favorited" isBoolean
 jsonpath "$.articles[0].favoritesCount" isInteger
 jsonpath "$.articles[0].author.username" == "feedc_{{uid}}"
 jsonpath "$.articles[0].author.following" == true
+jsonpath "$.*" count == 2
+jsonpath "$.articles[0].*" count == 9
+jsonpath "$.articles[0].author.*" count == 4
 
 # Feed with limit=1&offset=1
 GET {{host}}/api/articles/feed?limit=1&offset=1
@@ -113,6 +122,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.articles" count == 1
 jsonpath "$.articlesCount" == 2
+jsonpath "$.*" count == 2
 
 # Cleanup: delete articles
 DELETE {{host}}/api/articles/{{slug1}}

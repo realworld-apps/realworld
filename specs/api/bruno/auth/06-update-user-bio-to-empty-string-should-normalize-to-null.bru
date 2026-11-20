@@ -28,4 +28,6 @@ assert {
 
 script:post-response {
   expect(res.body.user.bio).to.be.null;
+  expect(Object.keys(res.body).length).to.eql(1);
+  expect(Object.keys(res.body.user).length).to.eql(5);
 }

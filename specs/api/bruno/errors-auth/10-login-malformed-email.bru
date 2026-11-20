@@ -25,4 +25,5 @@ assert {
 
 script:post-response {
   expect(res.body.errors.email[0]).to.eql("is invalid");
+  expect(Object.keys(res.body).length).to.eql(1);
 }

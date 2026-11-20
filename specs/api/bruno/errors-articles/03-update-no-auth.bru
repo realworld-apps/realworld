@@ -24,4 +24,5 @@ assert {
 
 script:post-response {
   expect(res.body.errors.token[0]).to.eql("is missing");
+  expect(Object.keys(res.body).length).to.eql(1);
 }

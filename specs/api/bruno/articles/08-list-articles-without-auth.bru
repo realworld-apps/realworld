@@ -17,4 +17,5 @@ assert {
 script:post-response {
   expect(Array.isArray(res.body.articles)).to.eql(true);
   expect(Number.isInteger(res.body.articlesCount)).to.eql(true);
+  expect(Object.keys(res.body).length).to.eql(2);
 }

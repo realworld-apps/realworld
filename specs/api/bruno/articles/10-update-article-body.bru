@@ -40,4 +40,7 @@ script:post-response {
   expect(typeof res.body.article.favorited).to.eql("boolean");
   expect(Number.isInteger(res.body.article.favoritesCount)).to.eql(true);
   expect(res.body.article.author.username).to.eql("art_" + bru.getVar("uid"));
+  expect(Object.keys(res.body).length).to.eql(1);
+  expect(Object.keys(res.body.article).length).to.eql(10);
+  expect(Object.keys(res.body.article.author).length).to.eql(4);
 }

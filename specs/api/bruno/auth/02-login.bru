@@ -31,4 +31,6 @@ script:post-response {
   expect(res.body.user.image).to.be.null;
   expect(typeof res.body.user.token).to.eql("string");
   expect(res.body.user.token).to.not.eql("");
+  expect(Object.keys(res.body).length).to.eql(1);
+  expect(Object.keys(res.body.user).length).to.eql(5);
 }

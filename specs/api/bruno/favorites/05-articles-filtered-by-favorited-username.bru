@@ -28,4 +28,7 @@ script:post-response {
   expect(typeof res.body.articles[0].favorited).to.eql("boolean");
   expect(Number.isInteger(res.body.articles[0].favoritesCount)).to.eql(true);
   expect(res.body.articles[0].favoritesCount).to.be.at.least(1);
+  expect(Object.keys(res.body).length).to.eql(2);
+  expect(Object.keys(res.body.articles[0]).length).to.eql(9);
+  expect(Object.keys(res.body.articles[0].author).length).to.eql(4);
 }

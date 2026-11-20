@@ -17,4 +17,7 @@ assert {
 script:post-response {
   expect(Array.isArray(res.body.article.tagList)).to.eql(true);
   expect(res.body.article.tagList.length).to.eql(0);
+  expect(Object.keys(res.body).length).to.eql(1);
+  expect(Object.keys(res.body.article).length).to.eql(10);
+  expect(Object.keys(res.body.article.author).length).to.eql(4);
 }

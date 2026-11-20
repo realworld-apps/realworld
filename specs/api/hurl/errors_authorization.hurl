@@ -44,6 +44,7 @@ Authorization: Token {{token_b}}
 HTTP 403
 [Asserts]
 jsonpath "$.errors.article[0]" == "forbidden"
+jsonpath "$[?count($.*) == 1]" exists
 
 # User B tries to update -> 403
 PUT {{host}}/api/articles/{{slug}}
@@ -56,6 +57,7 @@ Authorization: Token {{token_b}}
 HTTP 403
 [Asserts]
 jsonpath "$.errors.article[0]" == "forbidden"
+jsonpath "$[?count($.*) == 1]" exists
 
 # User A creates a comment on the article
 POST {{host}}/api/articles/{{slug}}/comments
@@ -75,6 +77,7 @@ Authorization: Token {{token_b}}
 HTTP 403
 [Asserts]
 jsonpath "$.errors.comment[0]" == "forbidden"
+jsonpath "$[?count($.*) == 1]" exists
 
 # Verify comment survived the failed delete
 GET {{host}}/api/articles/{{slug}}/comments
@@ -82,6 +85,9 @@ HTTP 200
 [Asserts]
 jsonpath "$.comments" count >= 1
 jsonpath "$.comments[0].body" == "A's comment"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.comments[0].*" count == 5
+jsonpath "$.comments[0].author.*" count == 4
 
 # Cleanup: User A deletes article
 DELETE {{host}}/api/articles/{{slug}}

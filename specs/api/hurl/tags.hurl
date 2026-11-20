@@ -36,6 +36,7 @@ jsonpath "$.tags" contains "h_{{uid}}"
 jsonpath "$.tags" contains "t_{{uid}}"
 jsonpath "$.tags[0]" isString
 jsonpath "$.tags[1]" isString
+jsonpath "$[?count($.*) == 1]" exists
 
 # Cleanup
 DELETE {{host}}/api/articles/{{slug}}

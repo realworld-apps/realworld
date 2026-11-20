@@ -16,4 +16,5 @@ assert {
 
 script:post-response {
   expect(res.body.errors.article[0]).to.eql("not found");
+  expect(Object.keys(res.body).length).to.eql(1);
 }

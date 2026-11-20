@@ -40,6 +40,9 @@ jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{
 jsonpath "$.article.favorited" == true
 jsonpath "$.article.favoritesCount" == 1
 jsonpath "$.article.author.username" == "fav_{{uid}}"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.article.*" count == 10
+jsonpath "$.article.author.*" count == 4
 
 # Verify favorite persists
 GET {{host}}/api/articles/{{slug}}
@@ -56,6 +59,9 @@ jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{
 jsonpath "$.article.favorited" == true
 jsonpath "$.article.favoritesCount" == 1
 jsonpath "$.article.author.username" == "fav_{{uid}}"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.article.*" count == 10
+jsonpath "$.article.author.*" count == 4
 
 # Articles filtered by favorited username
 GET {{host}}/api/articles?favorited=fav_{{uid}}
@@ -74,6 +80,9 @@ jsonpath "$.articles[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:
 jsonpath "$.articles[0].favorited" isBoolean
 jsonpath "$.articles[0].favoritesCount" isInteger
 jsonpath "$.articles[0].favoritesCount" >= 1
+jsonpath "$.*" count == 2
+jsonpath "$.articles[0].*" count == 9
+jsonpath "$.articles[0].author.*" count == 4
 
 # Articles filtered by favorited username with auth
 GET {{host}}/api/articles?favorited=fav_{{uid}}
@@ -93,6 +102,9 @@ jsonpath "$.articles[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:
 jsonpath "$.articles[0].favorited" isBoolean
 jsonpath "$.articles[0].favoritesCount" isInteger
 jsonpath "$.articles[0].favoritesCount" >= 1
+jsonpath "$.*" count == 2
+jsonpath "$.articles[0].*" count == 9
+jsonpath "$.articles[0].author.*" count == 4
 
 # Unfavorite article
 DELETE {{host}}/api/articles/{{slug}}/favorite
@@ -109,6 +121,9 @@ jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{
 jsonpath "$.article.favorited" == false
 jsonpath "$.article.favoritesCount" == 0
 jsonpath "$.article.author.username" == "fav_{{uid}}"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.article.*" count == 10
+jsonpath "$.article.author.*" count == 4
 
 # Verify unfavorite persists
 GET {{host}}/api/articles/{{slug}}
@@ -125,6 +140,9 @@ jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{
 jsonpath "$.article.favorited" == false
 jsonpath "$.article.favoritesCount" == 0
 jsonpath "$.article.author.username" == "fav_{{uid}}"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.article.*" count == 10
+jsonpath "$.article.author.*" count == 4
 
 # Cleanup
 DELETE {{host}}/api/articles/{{slug}}

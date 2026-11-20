@@ -30,6 +30,8 @@ jsonpath "$.profile.username" == "celeb_{{uid}}"
 jsonpath "$.profile.bio" == null
 jsonpath "$.profile.image" == null
 jsonpath "$.profile.following" == false
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.profile.*" count == 4
 
 # Get profile with auth
 GET {{host}}/api/profiles/celeb_{{uid}}
@@ -40,6 +42,8 @@ jsonpath "$.profile.username" == "celeb_{{uid}}"
 jsonpath "$.profile.bio" == null
 jsonpath "$.profile.image" == null
 jsonpath "$.profile.following" == false
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.profile.*" count == 4
 
 # Follow profile
 POST {{host}}/api/profiles/celeb_{{uid}}/follow
@@ -50,6 +54,8 @@ jsonpath "$.profile.username" == "celeb_{{uid}}"
 jsonpath "$.profile.bio" == null
 jsonpath "$.profile.image" == null
 jsonpath "$.profile.following" == true
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.profile.*" count == 4
 
 # Unfollow profile
 DELETE {{host}}/api/profiles/celeb_{{uid}}/follow
@@ -60,6 +66,8 @@ jsonpath "$.profile.username" == "celeb_{{uid}}"
 jsonpath "$.profile.bio" == null
 jsonpath "$.profile.image" == null
 jsonpath "$.profile.following" == false
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.profile.*" count == 4
 
 # Verify unfollow persisted
 GET {{host}}/api/profiles/celeb_{{uid}}
@@ -70,3 +78,5 @@ jsonpath "$.profile.username" == "celeb_{{uid}}"
 jsonpath "$.profile.bio" == null
 jsonpath "$.profile.image" == null
 jsonpath "$.profile.following" == false
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.profile.*" count == 4

@@ -39,6 +39,9 @@ HTTP 201
 [Asserts]
 jsonpath "$.article.title" == "Pagination 2 {{uid}}"
 jsonpath "$.article.slug" isString
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.article.*" count == 10
+jsonpath "$.article.author.*" count == 4
 [Captures]
 slug2: jsonpath "$.article.slug"
 
@@ -49,6 +52,9 @@ HTTP 200
 jsonpath "$.articles" count == 1
 jsonpath "$.articlesCount" == 2
 jsonpath "$.articles[0].slug" == "{{slug2}}"
+jsonpath "$.*" count == 2
+jsonpath "$.articles[0].*" count == 9
+jsonpath "$.articles[0].author.*" count == 4
 
 # List with limit=1&offset=1 (second page, so slug1)
 GET {{host}}/api/articles?author=page_{{uid}}&limit=1&offset=1
@@ -57,6 +63,9 @@ HTTP 200
 jsonpath "$.articles" count == 1
 jsonpath "$.articlesCount" == 2
 jsonpath "$.articles[0].slug" == "{{slug1}}"
+jsonpath "$.*" count == 2
+jsonpath "$.articles[0].*" count == 9
+jsonpath "$.articles[0].author.*" count == 4
 
 # Cleanup
 DELETE {{host}}/api/articles/{{slug1}}

@@ -19,4 +19,6 @@ script:post-response {
   expect(res.body.profile.bio).to.be.null;
   expect(res.body.profile.image).to.be.null;
   expect(res.body.profile.following).to.eql(false);
+  expect(Object.keys(res.body).length).to.eql(1);
+  expect(Object.keys(res.body.profile).length).to.eql(4);
 }

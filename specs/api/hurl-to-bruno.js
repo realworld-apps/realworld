@@ -285,6 +285,8 @@ function assertToJs(assertLine) {
   // jsonpath "$.x.y" == "val"
   // jsonpath "$.x" isString
   // jsonpath "$.x" count == 1
+  // jsonpath "$.x.*" count == 4
+  // jsonpath "$[?count($.*) == 1]" exists
   // jsonpath "$.x" contains "val"
   // jsonpath "$.x" not isEmpty
   // jsonpath "$.x" not exists
@@ -296,11 +298,24 @@ function assertToJs(assertLine) {
   const jp = jpMatch[1];
   const rest = jpMatch[2].trim();
 
+  // Exact number of keys of a single-key object: "$[?count($.*) == 1]" exists
+  // (Hurl unwraps a one-element result, so "$.*" count == 1 can't express this)
+  const keyCountMatch = jp.match(/^\$\[\?count\(\$\.\*\) == (\d+)\]$/);
+  if (keyCountMatch && rest === "exists") {
+    return `expect(Object.keys(res.body).length).to.eql(${keyCountMatch[1]});`;
+  }
+
   // count == N or count >= N
   const countMatch = rest.match(/^count\s+(==|>=)\s+(.+)$/);
   if (countMatch) {
     const op = countMatch[1];
     const val = countMatch[2].trim();
+    // "$.x.*" count == N: exact number of keys of the object at $.x
+    if (jp === "$.*" || jp.endsWith(".*")) {
+      if (op !== "==") throw new Error(`Unhandled hurl assert: ${assertLine}`);
+      const objPath = jp === "$.*" ? "res.body" : jsonpathToJs(jp.slice(0, -2));
+      return `expect(Object.keys(${objPath}).length).to.eql(${transformValue(val).expr});`;
+    }
     const jsPath = jsonpathToJs(jp);
     const transformed = transformValue(val);
     if (op === "==") {

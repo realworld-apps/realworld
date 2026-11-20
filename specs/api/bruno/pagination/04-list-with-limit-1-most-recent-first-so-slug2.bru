@@ -18,4 +18,7 @@ script:post-response {
   expect(res.body.articles.length).to.eql(1);
   expect(res.body.articlesCount).to.eql(2);
   expect(res.body.articles[0].slug).to.eql(bru.getVar("slug2"));
+  expect(Object.keys(res.body).length).to.eql(2);
+  expect(Object.keys(res.body.articles[0]).length).to.eql(9);
+  expect(Object.keys(res.body.articles[0].author).length).to.eql(4);
 }

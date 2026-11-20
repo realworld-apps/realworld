@@ -13,6 +13,7 @@ if [ ${#FILES[@]} -eq 0 ]; then
 fi
 
 hurl --test \
+  --error-format long \
   --jobs 1 \
   --variable "host=$HOST" \
   --variable "uid=$UID_VAL" \

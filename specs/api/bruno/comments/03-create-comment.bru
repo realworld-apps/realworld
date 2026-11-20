@@ -33,4 +33,7 @@ script:post-response {
   expect(res.body.comment.createdAt).to.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
   expect(res.body.comment.updatedAt).to.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
   expect(res.body.comment.author.username).to.eql("cmt_" + bru.getVar("uid"));
+  expect(Object.keys(res.body).length).to.eql(1);
+  expect(Object.keys(res.body.comment).length).to.eql(5);
+  expect(Object.keys(res.body.comment.author).length).to.eql(4);
 }

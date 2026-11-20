@@ -40,6 +40,9 @@ jsonpath "$.comment.body" == "Test comment body"
 jsonpath "$.comment.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.comment.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.comment.author.username" == "cmt_{{uid}}"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.comment.*" count == 5
+jsonpath "$.comment.author.*" count == 4
 [Captures]
 comment_id: jsonpath "$.comment.id"
 
@@ -55,6 +58,9 @@ jsonpath "$.comments[0].body" == "Test comment body"
 jsonpath "$.comments[0].createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.comments[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.comments[0].author.username" == "cmt_{{uid}}"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.comments[0].*" count == 5
+jsonpath "$.comments[0].author.*" count == 4
 
 # List comments without auth
 GET {{host}}/api/articles/{{slug}}/comments
@@ -67,6 +73,9 @@ jsonpath "$.comments[0].body" == "Test comment body"
 jsonpath "$.comments[0].createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.comments[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.comments[0].author.username" == "cmt_{{uid}}"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.comments[0].*" count == 5
+jsonpath "$.comments[0].author.*" count == 4
 
 # Delete comment
 DELETE {{host}}/api/articles/{{slug}}/comments/{{comment_id}}
@@ -78,6 +87,7 @@ GET {{host}}/api/articles/{{slug}}/comments
 HTTP 200
 [Asserts]
 jsonpath "$.comments" count == 0
+jsonpath "$[?count($.*) == 1]" exists
 
 # Selective deletion: create two comments, delete one, verify the other remains
 POST {{host}}/api/articles/{{slug}}/comments
@@ -105,6 +115,7 @@ GET {{host}}/api/articles/{{slug}}/comments
 HTTP 200
 [Asserts]
 jsonpath "$.comments" count == 2
+jsonpath "$[?count($.*) == 1]" exists
 
 # Delete the first comment
 DELETE {{host}}/api/articles/{{slug}}/comments/{{first_comment_id}}
@@ -117,6 +128,9 @@ HTTP 200
 [Asserts]
 jsonpath "$.comments" count == 1
 jsonpath "$.comments[0].body" == "Second comment"
+jsonpath "$[?count($.*) == 1]" exists
+jsonpath "$.comments[0].*" count == 5
+jsonpath "$.comments[0].author.*" count == 4
 
 # Cleanup
 DELETE {{host}}/api/articles/{{slug}}

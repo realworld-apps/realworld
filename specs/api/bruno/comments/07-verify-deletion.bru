@@ -16,4 +16,5 @@ assert {
 
 script:post-response {
   expect(res.body.comments.length).to.eql(0);
+  expect(Object.keys(res.body).length).to.eql(1);
 }

@@ -10,6 +10,7 @@ POST {{host}}/api/users
 HTTP 422
 [Asserts]
 jsonpath "$.errors.username[0]" == "can't be blank"
+jsonpath "$[?count($.*) == 1]" exists
 
 # Register empty email
 POST {{host}}/api/users
@@ -23,6 +24,7 @@ POST {{host}}/api/users
 HTTP 422
 [Asserts]
 jsonpath "$.errors.email[0]" == "can't be blank"
+jsonpath "$[?count($.*) == 1]" exists
 
 # Register empty password
 POST {{host}}/api/users
@@ -36,6 +38,7 @@ POST {{host}}/api/users
 HTTP 422
 [Asserts]
 jsonpath "$.errors.password[0]" == "can't be blank"
+jsonpath "$[?count($.*) == 1]" exists
 
 # Register malformed email
 POST {{host}}/api/users
@@ -49,6 +52,7 @@ POST {{host}}/api/users
 HTTP 422
 [Asserts]
 jsonpath "$.errors.email[0]" == "is invalid"
+jsonpath "$[?count($.*) == 1]" exists
 
 # Register valid user for duplicate and login tests
 POST {{host}}/api/users
@@ -75,6 +79,7 @@ POST {{host}}/api/users
 HTTP 409
 [Asserts]
 jsonpath "$.errors.username[0]" == "has already been taken"
+jsonpath "$[?count($.*) == 1]" exists
 
 # Register duplicate email
 POST {{host}}/api/users
@@ -88,6 +93,7 @@ POST {{host}}/api/users
 HTTP 409
 [Asserts]
 jsonpath "$.errors.email[0]" == "has already been taken"
+jsonpath "$[?count($.*) == 1]" exists
 
 # Login empty email
 POST {{host}}/api/users/login
@@ -100,6 +106,7 @@ POST {{host}}/api/users/login
 HTTP 422
 [Asserts]
 jsonpath "$.errors.email[0]" == "can't be blank"
+jsonpath "$[?count($.*) == 1]" exists
 
 # Login empty password
 POST {{host}}/api/users/login
@@ -112,6 +119,7 @@ POST {{host}}/api/users/login
 HTTP 422
 [Asserts]
 jsonpath "$.errors.password[0]" == "can't be blank"
+jsonpath "$[?count($.*) == 1]" exists
 
 # Login malformed email
 POST {{host}}/api/users/login
@@ -124,6 +132,7 @@ POST {{host}}/api/users/login
 HTTP 422
 [Asserts]
 jsonpath "$.errors.email[0]" == "is invalid"
+jsonpath "$[?count($.*) == 1]" exists
 
 # Login wrong password
 POST {{host}}/api/users/login
@@ -136,12 +145,14 @@ POST {{host}}/api/users/login
 HTTP 401
 [Asserts]
 jsonpath "$.errors.credentials[0]" == "invalid"
+jsonpath "$[?count($.*) == 1]" exists
 
 # GET /user no auth
 GET {{host}}/api/user
 HTTP 401
 [Asserts]
 jsonpath "$.errors.token[0]" == "is missing"
+jsonpath "$[?count($.*) == 1]" exists
 
 # PUT /user no auth
 PUT {{host}}/api/user
@@ -153,6 +164,7 @@ PUT {{host}}/api/user
 HTTP 401
 [Asserts]
 jsonpath "$.errors.token[0]" == "is missing"
+jsonpath "$[?count($.*) == 1]" exists
 
 # Update email to empty string - should reject
 PUT {{host}}/api/user
@@ -175,6 +187,7 @@ Authorization: Token {{token}}
 HTTP 422
 [Asserts]
 jsonpath "$.errors.email[0]" == "is invalid"
+jsonpath "$[?count($.*) == 1]" exists
 
 # Update username to empty string - should reject
 PUT {{host}}/api/user

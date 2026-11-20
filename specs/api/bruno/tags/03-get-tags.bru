@@ -21,4 +21,5 @@ script:post-response {
   expect(res.body.tags).to.include("t_" + bru.getVar("uid"));
   expect(typeof res.body.tags[0]).to.eql("string");
   expect(typeof res.body.tags[1]).to.eql("string");
+  expect(Object.keys(res.body).length).to.eql(1);
 }

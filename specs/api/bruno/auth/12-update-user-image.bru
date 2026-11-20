@@ -28,4 +28,6 @@ assert {
 
 script:post-response {
   expect(res.body.user.image).to.eql("https://example.com/photo.jpg");
+  expect(Object.keys(res.body).length).to.eql(1);
+  expect(Object.keys(res.body.user).length).to.eql(5);
 }

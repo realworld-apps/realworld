@@ -20,4 +20,6 @@ assert {
 
 script:post-response {
   expect(res.body.profile.following).to.eql(true);
+  expect(Object.keys(res.body).length).to.eql(1);
+  expect(Object.keys(res.body.profile).length).to.eql(4);
 }

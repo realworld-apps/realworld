@@ -32,4 +32,7 @@ script:post-response {
   bru.setVar("slug2", res.body.article.slug);
   expect(res.body.article.title).to.eql("Pagination 2 " + bru.getVar("uid"));
   expect(typeof res.body.article.slug).to.eql("string");
+  expect(Object.keys(res.body).length).to.eql(1);
+  expect(Object.keys(res.body.article).length).to.eql(10);
+  expect(Object.keys(res.body.article.author).length).to.eql(4);
 }
