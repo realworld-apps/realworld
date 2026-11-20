@@ -33,11 +33,11 @@ literally consumed as `./e2e`). If that's why you're reading this:
 
 ## Running the test suites
 
-API suite (point `HOST` at a running backend, run from `specs/api/`):
+API suite (point `HOST` at a running backend, without `/api`, run from `specs/api/`):
 
 ```
-HOST=http://localhost:3000/api ./run-api-tests-hurl.sh    # source of truth
-HOST=http://localhost:3000/api ./run-api-tests-bruno.sh    # generated mirror
+HOST=http://localhost:3000 ./run-api-tests-hurl.sh    # source of truth
+HOST=http://localhost:3000 ./run-api-tests-bruno.sh    # generated mirror
 ```
 
 Regenerate / verify the Bruno collection:
